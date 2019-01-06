@@ -1,0 +1,24 @@
+{
+	"manifest_version": 2,
+	"name": "PowerBI Matrix Copy",
+	"version": "0.1",
+	"description": "Copy from PowerBI's Matrix Visual to clipboard(TSV format)",
+	"icons": {
+		"16": "icon16.png",
+		"48": "icon48.png",
+		"128": "icon128.png"
+	},
+	"browser_action": {
+		"default_icon": "icon19.png",
+		"default_popup": "popup.html"
+	},
+	"content_scripts": [{
+		"matches": ["https://app.powerbi.com/*"],
+		"js": ["jquery-3.3.1.min.js", "matrix_copy.js"],
+		"run_at": "document_end"
+	}],
+	"permissions": [
+		"tabs"
+	],
+  "homepage_url": "https://github.com/MurayamaOsamu/PowerBI-MatrixCopy"
+}
