@@ -1,4 +1,7 @@
 // Power BI Matrix Visual to TSV
+var headerWait = 200;
+var bodyWait = 200;
+
 function getColumnHeaders(pivotTable, scrollFlag, steps, lefts, cells) {
 	return new Promise(function(resolve) {
 		var maxLeft = -1;
@@ -20,7 +23,7 @@ function getColumnHeaders(pivotTable, scrollFlag, steps, lefts, cells) {
 				}
 			}
 			resolve(scrollFlag&&continueFlag);
-		}, 200);
+		}, headerWait);
 	})
 }
 
@@ -50,7 +53,7 @@ function getRowHeaders(pivotTable, scrollFlag, steps, tops, cells) {
 				}
 			}
 			resolve(scrollFlag&&continueFlag);
-		}, 200);
+		}, headerWait);
 	})
 }
 
@@ -65,11 +68,11 @@ function getBodyCells(pivotTable, rIndex, cIndex, cells) {
 				var i = rIndex[""+offset.top];
 				var j = cIndex[""+offset.left];
 				if (i >= 0 && j >= 0) {
-					cells[i][j] = val;
+					cells[i][j] = '"'+val.replace(/"/g, '""')+'"';
 				}
 			}
 			resolve(true);
-		}, 100);
+		}, bodyWait);
 	})
 }
 
@@ -84,11 +87,11 @@ function getFloatingBodyCells(pivotTable, rIndex, cIndex, cells) {
 				var i = rIndex[""+offset.top];
 				var j = cIndex[""+offset.left];
 				if (i >= 0 && j >= 0) {
-					cells[i][j] = val;
+					cells[i][j] = '"'+val.replace(/"/g, '""')+'"';
 				}
 			}
 			resolve(true);
-		}, 100);
+		}, bodyWait);
 	})
 }
 
@@ -184,7 +187,7 @@ async function getCells(pivotTable) {
 		var c = cornerCells[k];
 		var i = rowHeaderIndex[""+c.top];
 		var j = colHeaderIndex[""+c.left];
-		cells[i][j] = c.value;
+		cells[i][j] = '"'+c.value.replace(/"/g, '""')+'"';
 	}
 
 	for (var i = 0; i < hSteps.length; i++) {
@@ -197,21 +200,21 @@ async function getCells(pivotTable) {
 		var c = colHeaderCells[k];
 		var i = rowHeaderIndex[""+c.top];
 		var j = headerLefts.indexOf(c.left)+cornerLefts.length;
-		cells[i][j] = c.value;
+		cells[i][j] = '"'+c.value.replace(/"/g, '""')+'"';
 		colIndex[""+c.step][""+c.offset] = j;
 	}
 	for (var k = 0; k < rowHeaderCells.length; k++) {
 		var c = rowHeaderCells[k];
 		var i = headerTops.indexOf(c.top)+cornerTops.length;
 		var j = colHeaderIndex[""+c.left];
-		cells[i][j] = c.value;
+		cells[i][j] = '"'+c.value.replace(/"/g, '""')+'"';
 		rowIndex[""+c.step][""+c.offset] = i;
 	}
 	for (var k = 0; k < floatingRowHeaderCells.length; k++) {
 		var c = floatingRowHeaderCells[k];
 		var i = floatingTops.indexOf(c.top)+cornerTops.length+headerTops.length;
 		var j = colHeaderIndex[""+c.left];
-		cells[i][j] = c.value;
+		cells[i][j] = '"'+c.value.replace(/"/g, '""')+'"';
 		floatingIndex[""+c.offset] = i;
 	}
 
