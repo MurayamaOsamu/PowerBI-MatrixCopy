@@ -27,6 +27,30 @@ function getColumnHeaders(pivotTable, scrollFlag, steps, lefts, cells) {
 	})
 }
 
+function preScroll2Bottom(pivotTable, tops) {
+	return new Promise(function(resolve) {
+		var maxTop = -1;
+		if (tops.length > 0) {
+			maxTop = Math.max(...tops);
+		}
+		pivotTable.find("div.bodyCells").scrollTop(maxTop);
+		setTimeout(function(){
+			var tmp = pivotTable.find("div.rowHeaders").find("div.pivotTableCellWrap,div.pivotTableCellNoWrap");
+			continueFlag = false;
+			for (var i = 0; i < tmp.length; i++) {
+				var pdiv = $(tmp[i]).parent();
+				if (pdiv.hasClass("expandableCell")) {pdiv = pdiv.parent();}
+				var t = parseInt(pdiv.css("top"));
+				if (t > maxTop) {
+					continueFlag = true;
+					tops.push(t);
+				}
+			}
+			resolve(continueFlag);
+		}, headerWait);
+	}
+}
+
 function getRowHeaders(pivotTable, scrollFlag, steps, tops, cells) {
 	return new Promise(function(resolve) {
 		var maxTop = -1;
@@ -150,6 +174,16 @@ async function getCells(pivotTable) {
 	headerLefts = headerLefts.filter(function (x, i, self) {
 		return self.indexOf(x) === i;
 	}).sort((a, b) => a - b);
+	if (hScroll) {pivotTable.find("div.bodyCells").scrollLeft(-1);}
+
+	// Pre-Fetch to make getRowHeaders & getBodyCells the same condition
+	if (vScroll) {
+		flag = true;
+		preTops = [];
+		while (flag) {
+			flag = await preScroll2Bottom(pivotTable, preTops);
+		}
+	}
 
 	// Row Header
 	flag = true;
@@ -258,9 +292,10 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 			response.result = true;
 			response.message = tsv;
 			sendResponse(response);
+
+			// returns true if asyncronous is needed
+			return true;
 		});
 	}
 
-	// returns true if asyncronous is needed
-	return true;
 });

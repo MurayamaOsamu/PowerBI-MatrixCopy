@@ -1,7 +1,7 @@
 {
 	"manifest_version": 2,
 	"name": "PowerBI Matrix Copy",
-	"version": "0.2",
+	"version": "0.3",
 	"description": "Copy from PowerBI's Matrix Visual to clipboard(TSV format)",
 	"icons": {
 		"16": "icon16.png",
