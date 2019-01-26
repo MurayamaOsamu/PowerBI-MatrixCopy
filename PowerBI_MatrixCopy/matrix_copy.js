@@ -48,7 +48,7 @@ function preScroll2Bottom(pivotTable, tops) {
 			}
 			resolve(continueFlag);
 		}, headerWait);
-	}
+	})
 }
 
 function getRowHeaders(pivotTable, scrollFlag, steps, tops, cells) {
@@ -298,4 +298,6 @@ chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
 		});
 	}
 
+	// returns true if asyncronous is needed
+	return true;
 });
